@@ -91,6 +91,7 @@
             color: #0095f6;
             border: 1px solid #dbdbdb;
             margin-top: 8px;
+            padding: 10px 12px;
         }
 
         .btn-secondary:hover {
@@ -257,14 +258,19 @@
         }
 
         #form button {
-            padding: 10px 24px;
+            padding: 12px 16px;
             background: #0095f6;
             color: #fff;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 50%;
+            font-size: 18px;
             cursor: pointer;
             margin: 0;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #form button:hover {
@@ -295,8 +301,9 @@
 
         <input id="username-input" autocomplete="off" placeholder="Username" />
 
-        <div class="input-group">
-            <input id="room-input" autocomplete="off" placeholder="Room code" style="flex: 1;" />
+        <div class="input-group" style="display: flex; gap: 8px;">
+            <input id="room-input" autocomplete="off" placeholder="Room code"
+                style="flex: 1; background: #ffffff !important; color: #000000 !important;" />
             <button onclick="generateSecretId()" class="btn-secondary">Generate</button>
         </div>
 
@@ -315,7 +322,7 @@
 
         <form id="form" action="">
             <input id="input" autocomplete="off" placeholder="Message..." />
-            <button>Send</button>
+            <button>✈️</button>
         </form>
     </div>
 
