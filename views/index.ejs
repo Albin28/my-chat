@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlitchGab // Uplink</title>
+    <style>
+        /* CYBERPUNK THEME - GLITCHGAB EDITION */
+        :root {
+            --bg-color: #0d0d0d;
+            --text-color: #39ff14;
+            /* Phosphor Green */
+            --accent-color: #00ffff;
+            /* Neon Cyan */
+            --my-msg-bg: #003300;
+            --other-msg-bg: #001a1a;
+            --font-stack: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #login-screen {
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            border: 1px solid var(--text-color);
+            box-shadow: 0 0 20px var(--text-color);
+            background: rgba(0, 0, 0, 0.95);
+            position: relative;
+            text-align: center;
+        }
+
+        #chat-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.9);
+            position: relative;
+        }
+
+        /* Scanline effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* COMPACT HEADER */
+        header {
+            padding: 10px 20px;
+            border-bottom: 2px solid var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #000;
+            z-index: 10;
+        }
+
+        header .logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+
+        header .room-info {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        header .user-info {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        h1.glow-title {
+            text-align: center;
+            text-shadow: 0 0 5px var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+            font-size: 2.5rem;
+        }
+
+        /* FORM ELEMENTS */
+        input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--text-color);
+            color: var(--accent-color);
+            font-family: var(--font-stack);
+            font-size: 1.1rem;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input::placeholder {
+            color: rgba(57, 255, 20, 0.4);
+        }
+
+        button {
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 20px;
+            font-family: var(--font-stack);
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color);
+            transform: scale(1.02);
+        }
+
+        /* MESSAGES AREA */
+        #messages-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Scrollbar */
+        #messages-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messages-container::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        #messages-container::-webkit-scrollbar-thumb {
+            background: var(--text-color);
+        }
+
+        .message-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .message-row.mine {
+            justify-content: flex-end;
+        }
+
+        .message-row.theirs {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 5px;
+            position: relative;
+            word-wrap: break-word;
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            box-shadow: 0 0 5px rgba(57, 255, 20, 0.1);
+        }
+
+        .message-row.mine .message-bubble {
+            background-color: var(--my-msg-bg);
+            border-color: var(--text-color);
+            border-bottom-right-radius: 0;
+        }
+
+        .message-row.theirs .message-bubble {
+            background-color: var(--other-msg-bg);
+            border-color: var(--accent-color);
+            border-bottom-left-radius: 0;
+        }
+
+        .message-bubble::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .mine .message-bubble::after {
+            right: -8px;
+            bottom: -1px;
+            border-top: 10px solid transparent;
+            border-left: 10px solid var(--text-color);
+            border-bottom: 0;
+        }
+
+        .mine .message-bubble::before {
+            /* Inner tail color match */
+            content: '';
+            position: absolute;
+            right: -6px;
+            bottom: 0px;
+            border-top: 8px solid transparent;
+            border-left: 8px solid var(--my-msg-bg);
+            border-bottom: 0;
+            z-index: 1;
+        }
+
+        .theirs .message-bubble::after {
+            left: -8px;
+            bottom: -1px;
+            border-top: 10px solid transparent;
+            border-right: 10px solid var(--accent-color);
+            border-bottom: 0;
+        }
+
+        .theirs .message-bubble::before {
+            /* Inner tail color match */
+            content: '';
+            position: absolute;
+            left: -6px;
+            bottom: 0px;
+            border-top: 8px solid transparent;
+            border-right: 8px solid var(--other-msg-bg);
+            border-bottom: 0;
+            z-index: 1;
+        }
+
+        .message-sender {
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            opacity: 0.7;
+            display: block;
+        }
+
+        .mine .message-sender {
+            text-align: right;
+            color: var(--text-color);
+        }
+
+        .theirs .message-sender {
+            text-align: left;
+            color: var(--accent-color);
+        }
+
+        .message-text {
+            font-size: 1rem;
+        }
+
+        .tag-highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+            color: #ffff00;
+            padding: 0 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .notification {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            font-size: 0.8rem;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        /* INPUT AREA */
+        #form {
+            display: flex;
+            gap: 0;
+            padding: 20px;
+            background: #000;
+            border-top: 1px solid var(--text-color);
+        }
+
+        #form input {
+            flex-grow: 1;
+            margin-bottom: 0;
+            border-right: none;
+        }
+
+        #form button {
+            width: auto;
+            padding: 0 30px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .glow {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px var(--text-color);
+            }
+
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px var(--text-color);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <h1 class="glow-title">GlitchGab</h1>
+        <p style="margin-bottom: 20px; font-size: 0.9rem;">> ESTABLISH SECURE CONNECTION</p>
+
+        <input id="username-input" autocomplete="off" placeholder="> Enter Codename..." />
+
+        <div style="display: flex; gap: 10px;">
+            <input id="room-input" autocomplete="off" placeholder="> Enter Frequency ID..." style="flex-grow: 1;" />
+            <button onclick="generateSecretId()" style="width: auto; white-space: nowrap; font-size: 0.8rem;">[ GEN ID
+                ]</button>
+        </div>
+
+        <button onclick="joinChat()" style="margin-top: 1rem;">>> INITIALIZE UPLINK <<< </button>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="hidden">
+        <header>
+            <div class="logo">GlitchGab</div>
+            <div class="room-info" id="room-display-header">FREQ: NULL</div>
+            <div class="user-info" id="user-display-header">OP: NULL</div>
+        </header>
+
+        <div id="messages-container"></div>
+
+        <form id="form" action="">
+            <input id="input" autocomplete="off" placeholder="> Transmit message... (@username to tag)" />
+            <button>SEND</button>
+        </form>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        const loginScreen = document.getElementById('login-screen');
+        const chatScreen = document.getElementById('chat-screen');
+        const usernameInput = document.getElementById('username-input');
+        const roomInput = document.getElementById('room-input');
+
+        const roomDisplayHeader = document.getElementById('room-display-header');
+        const userDisplayHeader = document.getElementById('user-display-header');
+
+        const messagesContainer = document.getElementById('messages-container');
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+
+        let myUsername = '';
+        let myRoom = '';
+
+        function generateSecretId() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // Letters only, removed I/O to avoid confusion
+            let result = '';
+            for (let i = 0; i < 3; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            roomInput.value = result;
+        }
+
+        function joinChat() {
+            myUsername = usernameInput.value.trim();
+            myRoom = roomInput.value.trim();
+
+            if (myUsername && myRoom) {
+                loginScreen.classList.add('hidden');
+                chatScreen.classList.remove('hidden');
+
+                // Update Header
+                roomDisplayHeader.textContent = `FREQ: ${myRoom}`;
+                userDisplayHeader.textContent = `OP: ${myUsername}`;
+
+                socket.emit('join room', { username: myUsername, room: myRoom });
+            } else {
+                alert("> ERROR: Credentials missing.");
+            }
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value) {
+                const msg = input.value;
+                socket.emit('chat message', { msg, room: myRoom, username: myUsername });
+                input.value = '';
+            }
+        });
+
+        socket.on('chat message', function (data) {
+            const isMe = data.username === myUsername;
+            const rowDiv = document.createElement('div');
+            rowDiv.className = `message-row ${isMe ? 'mine' : 'theirs'}`;
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+
+            // Tagging Logic: Replace @myUsername with highlighted span
+            let processedMsg = data.msg;
+            // Highlight ANY @username mention (visually)
+            processedMsg = processedMsg.replace(/@(\w+)/g, '<span class="tag-highlight">@$1</span>');
+
+            const senderSpan = document.createElement('span');
+            senderSpan.className = 'message-sender';
+            senderSpan.textContent = isMe ? 'YOU' : data.username;
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.innerHTML = processedMsg;
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = data.time || 'NOW';
+            timeDiv.style.fontSize = '0.7rem';
+            timeDiv.style.textAlign = 'right';
+            timeDiv.style.opacity = '0.6';
+            timeDiv.style.marginTop = '4px';
+
+            bubbleDiv.appendChild(senderSpan);
+            bubbleDiv.appendChild(textDiv);
+            bubbleDiv.appendChild(timeDiv);
+            rowDiv.appendChild(bubbleDiv);
+
+            messagesContainer.appendChild(rowDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+
+        socket.on('notification', function (msg) {
+            const notifDiv = document.createElement('div');
+            notifDiv.className = 'notification';
+            notifDiv.textContent = `> SYSTEM: ${msg}`;
+            messagesContainer.appendChild(notifDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    </script>
+</body>
+
+</html>
