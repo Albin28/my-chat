@@ -30,6 +30,14 @@ io.on('connection', (socket) => {
     io.to(room).emit('chat message', { msg, username, time });
   });
 
+  socket.on('typing', ({ username, room }) => {
+    socket.to(room).emit('typing', { username });
+  });
+
+  socket.on('stop typing', ({ username, room }) => {
+    socket.to(room).emit('stop typing', { username });
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected');
     // In a real app we'd track usernames to map socket IDs to names for leave notifications

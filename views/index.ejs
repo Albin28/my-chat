@@ -4,33 +4,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlitchGab</title>
+    <title>GlitchGab | Future Chat</title>
     <style>
-        /* INSTAGRAM-INSPIRED DESIGN */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --secondary: #a855f7;
+            --accent: #ec4899;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Animated Mesh Gradient Background */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, #312e81 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #1e1b4b 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #312e81 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #0f172a 0%, transparent 100%);
+        }
+
+        .bg-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            filter: blur(120px);
+            opacity: 0.15;
+            border-radius: 50%;
+            z-index: -1;
+            animation: move 20s infinite alternate;
+        }
+
+        .bg-blob-2 {
+            background: var(--secondary);
+            animation-delay: -5s;
+            left: 20%;
+        }
+
+        .bg-blob-3 {
+            background: var(--accent);
+            animation-delay: -10s;
+            right: 10%;
+            bottom: 10%;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(-10%, -10%) scale(1);
             }
 
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
+            to {
+                transform: translate(20%, 20%) scale(1.2);
             }
         }
 
-        @keyframes fadeIn {
+        /* Glassmorphism Containers */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(30px);
             }
 
             to {
@@ -39,195 +112,151 @@
             }
         }
 
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #667eea 75%, #764ba2 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            color: #262626;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image:
-                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 20%, rgba(240, 147, 251, 0.1) 0%, transparent 60%);
-            pointer-events: none;
-            animation: pulse 8s ease-in-out infinite;
-        }
-
-        /* LOGIN SCREEN */
-        #login-screen {
-            width: 100%;
-            max-width: 350px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 40px;
+        .logo-container {
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-                0 0 60px rgba(102, 126, 234, 0.3);
-            animation: fadeIn 0.6s ease-out;
+            margin-bottom: 32px;
         }
 
         .app-logo {
-            font-size: 48px;
-            font-weight: 600;
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 40px;
-            font-family: 'Brush Script MT', cursive;
-            filter: drop-shadow(0 2px 8px rgba(220, 39, 67, 0.3));
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* Form Styled Inputs */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper label {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+            pointer-events: none;
+            transition: all 0.3s ease;
         }
 
         input {
             width: 100%;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            background: #ffffff !important;
-            border: 1px solid #dbdbdb;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #000000 !important;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
             outline: none;
-        }
-
-        input:focus {
-            border-color: #a8a8a8;
-        }
-
-        input::placeholder {
-            color: #8e8e8e;
-        }
-
-        button {
-            width: 100%;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #0095f6 0%, #667eea 100%);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 12px;
-            box-shadow: 0 4px 15px rgba(0, 149, 246, 0.3);
             transition: all 0.3s ease;
         }
 
-        button:hover {
-            background: linear-gradient(135deg, #1877f2 0%, #764ba2 100%);
-            box-shadow: 0 6px 20px rgba(0, 149, 246, 0.4);
-            transform: translateY(-2px);
+        input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
 
-        button:active {
-            opacity: 0.7;
+        input:focus+label,
+        input:not(:placeholder-shown)+label {
+            top: -10px;
+            left: 12px;
+            font-size: 12px;
+            color: var(--primary);
+            background: var(--bg-dark);
+            padding: 0 6px;
         }
 
-        .btn-secondary {
-            background: #fff;
-            color: #0095f6;
-            border: 1px solid #dbdbdb;
-            margin-top: 8px;
-            padding: 10px 12px;
-        }
-
-        .btn-secondary:hover {
-            background: #fafafa;
-        }
-
-        .input-group {
+        .input-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
-        /* CHAT SCREEN */
-        #chat-screen {
+        .btn-glow {
             width: 100%;
-            max-width: 935px;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            background: var(--primary);
+            border: none;
             border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        /* HEADER */
-        header {
-            padding: 20px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--primary-glow);
+            background: #4f46e5;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0 20px;
+            font-size: 13px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* CHAT INTERFACE */
+        #chat-screen {
+            width: 100%;
+            height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            background: var(--bg-dark);
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
             justify-content: space-between;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
         }
 
-        .logo {
-            font-size: 24px;
+        .room-tag {
+            background: var(--primary-glow);
+            color: #c7d2fe;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 12px;
             font-weight: 600;
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            border: 1px solid var(--primary);
         }
 
-        .room-badge {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-            padding: 6px 16px;
-            border-radius: 16px;
-            font-size: 13px;
-            color: #262626;
-            font-weight: 600;
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #8e8e8e;
-        }
-
-        /* MESSAGES */
         #messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.95) 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--glass-border) transparent;
         }
 
         #messages-container::-webkit-scrollbar {
@@ -235,201 +264,263 @@
         }
 
         #messages-container::-webkit-scrollbar-thumb {
-            background: #dbdbdb;
-            border-radius: 3px;
+            background: var(--glass-border);
+            border-radius: 10px;
         }
 
-        .message-row {
-            display: flex;
-            margin-bottom: 16px;
+        .msg-node {
+            max-width: 70%;
+            animation: popIn 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28);
         }
 
-        .message-row.mine {
-            justify-content: flex-end;
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
-        .message-row.theirs {
-            justify-content: flex-start;
+        .msg-node.mine {
+            align-self: flex-end;
         }
 
-        .message-bubble {
-            max-width: 60%;
-            padding: 12px 16px;
+        .msg-node.theirs {
+            align-self: flex-start;
+        }
+
+        .bubble {
+            padding: 14px 20px;
             border-radius: 20px;
-            word-wrap: break-word;
-            animation: fadeIn 0.3s ease-out;
-            transition: transform 0.2s ease;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.5;
         }
 
-        .message-bubble:hover {
-            transform: translateY(-2px);
+        .mine .bubble {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-bottom-right-radius: 4px;
         }
 
-        .message-row.mine .message-bubble {
-            background: linear-gradient(135deg, #0095f6 0%, #667eea 100%);
-            background-size: 200% 200%;
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(0, 149, 246, 0.4);
+        .theirs .bubble {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: #f1f5f9;
+            border-bottom-left-radius: 4px;
         }
 
-        .message-row.theirs .message-bubble {
-            background: rgba(239, 239, 239, 0.9);
-            color: #262626;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .message-sender {
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .message-row.mine .message-sender {
-            color: rgba(255, 255, 255, 0.8);
-            text-align: right;
-        }
-
-        .message-row.theirs .message-sender {
-            color: #8e8e8e;
-        }
-
-        .message-text {
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .message-time {
+        .meta {
             font-size: 11px;
-            margin-top: 4px;
-            opacity: 0.6;
-            text-align: right;
-        }
-
-        .tag-highlight {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
-        .notification {
-            text-align: center;
-            color: #8e8e8e;
-            font-size: 13px;
-            margin: 20px 0;
-        }
-
-        /* INPUT AREA */
-        #form {
+            color: var(--text-muted);
+            margin-top: 6px;
             display: flex;
-            gap: 12px;
-            padding: 20px;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.95) 100%);
-            backdrop-filter: blur(10px);
+            gap: 8px;
         }
 
-        #form input {
-            flex: 1;
-            padding: 10px 16px;
-            border: 2px solid rgba(102, 126, 234, 0.2);
-            border-radius: 22px;
-            background: rgba(255, 255, 255, 0.95) !important;
-            color: #000000 !important;
-            margin: 0;
-            transition: all 0.3s ease;
+        .mine .meta {
+            flex-direction: row-reverse;
         }
 
-        #form input:focus {
-            border-color: #667eea;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background: #ffffff !important;
+        /* TYPING INDICATOR */
+        #typing-box {
+            height: 24px;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 500;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        #form button {
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #0095f6 0%, #667eea 100%);
-            color: #fff;
-            border: none;
+        .dot-bounce {
+            display: inline-flex;
+            gap: 3px;
+        }
+
+        .dot {
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
             border-radius: 50%;
-            font-size: 20px;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0.6);
+                opacity: 0.4;
+            }
+
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* FOOTER INPUT */
+        footer {
+            padding: 24px 40px;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .input-bar {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            display: flex;
+            padding: 8px;
+            gap: 12px;
+            transition: 0.3s;
+        }
+
+        .input-bar:focus-within {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-input {
+            background: transparent;
+            border: none;
+            flex: 1;
+            padding: 8px 12px;
+            color: white;
+            font-size: 15px;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             cursor: pointer;
-            margin: 0;
-            width: 44px;
-            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 12px rgba(0, 149, 246, 0.3);
+            transition: 0.3s;
         }
 
-        #form button:hover {
-            background: linear-gradient(135deg, #1877f2 0%, #764ba2 100%);
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 6px 25px rgba(0, 149, 246, 0.5);
-        }
-
-        #form button:active {
-            transform: scale(0.95) rotate(0deg);
+        .send-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
         }
 
         .hidden {
             display: none !important;
         }
 
-        @media (max-width: 768px) {
-            #chat-screen {
-                max-width: 100%;
-                border: none;
+        /* Notification */
+        .system-notif {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        @media (max-width: 640px) {
+
+            header,
+            footer {
+                padding: 16px;
             }
 
-            #login-screen {
-                border: none;
+            #messages-container {
+                padding: 20px;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="bg-canvas">
+        <div class="bg-blob"></div>
+        <div class="bg-blob bg-blob-2"></div>
+        <div class="bg-blob bg-blob-3"></div>
+    </div>
+
     <!-- Login Screen -->
-    <div id="login-screen">
-        <div class="app-logo">GlitchGab</div>
-
-        <input id="username-input" autocomplete="off" placeholder="Username"
-            style="background: #ffffff !important; color: #000000 !important;" />
-
-        <div class="input-group" style="display: flex; gap: 8px;">
-            <input id="room-input" autocomplete="off" placeholder="Room code"
-                style="flex: 1; background: #ffffff !important; color: #000000 !important; border: 2px solid rgba(102, 126, 234, 0.3) !important; padding: 10px 12px !important; font-size: 14px !important;" />
-            <button onclick="generateSecretId()" class="btn-secondary">Generate</button>
+    <div id="login-screen" class="glass-card">
+        <div class="logo-container">
+            <div class="app-logo">GlitchGab</div>
+            <div class="subtitle">Ephemeral high-speed communication</div>
         </div>
 
-        <button onclick="joinChat()">Join Room</button>
+        <div class="input-wrapper">
+            <input type="text" id="username-input" placeholder=" " autocomplete="off">
+            <label>Master Name</label>
+        </div>
+
+        <div class="input-row">
+            <div class="input-wrapper" style="flex: 1; margin-bottom: 0;">
+                <input type="text" id="room-input" placeholder=" " autocomplete="off">
+                <label>Room Secret</label>
+            </div>
+            <button onclick="generateSecretId()" class="btn-secondary">Gencode</button>
+        </div>
+
+        <button onclick="joinChat()" class="btn-glow">Access Mainframe</button>
     </div>
 
     <!-- Chat Screen -->
     <div id="chat-screen" class="hidden">
         <header>
-            <div class="logo">GlitchGab</div>
-            <div class="room-badge" id="room-display-header">Room</div>
-            <div class="user-name" id="user-display-header"></div>
+            <div class="app-logo" style="font-size: 24px;">G.</div>
+            <div class="room-tag" id="room-display-header">VOID</div>
+            <div style="font-size: 13px; color: var(--text-muted);" id="user-display-header">USER</div>
         </header>
 
         <div id="messages-container"></div>
 
-        <form id="form" action="">
-            <input id="input" autocomplete="off" placeholder="Message..." />
-            <button>✈️</button>
-        </form>
+        <footer>
+            <div id="typing-box" class="hidden">
+                <div class="dot-bounce">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <span id="typing-text">Someone is decrypting...</span>
+            </div>
+            <form id="form" class="input-bar">
+                <input id="input" class="chat-input" autocomplete="off" placeholder="Write a message...">
+                <button class="send-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </footer>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
-
+        const socket = io();
         const loginScreen = document.getElementById('login-screen');
         const chatScreen = document.getElementById('chat-screen');
         const usernameInput = document.getElementById('username-input');
@@ -439,9 +530,12 @@
         const messagesContainer = document.getElementById('messages-container');
         const form = document.getElementById('form');
         const input = document.getElementById('input');
+        const typingBox = document.getElementById('typing-box');
+        const typingText = document.getElementById('typing-text');
 
         let myUsername = '';
         let myRoom = '';
+        let typingTimeout;
 
         function generateSecretId() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -450,6 +544,7 @@
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             roomInput.value = result;
+            roomInput.dispatchEvent(new Event('input')); // Trigger label animation
         }
 
         function joinChat() {
@@ -459,60 +554,66 @@
             if (myUsername && myRoom) {
                 loginScreen.classList.add('hidden');
                 chatScreen.classList.remove('hidden');
-
-                roomDisplayHeader.textContent = myRoom;
-                userDisplayHeader.textContent = myUsername;
-
+                roomDisplayHeader.textContent = `ROOM: ${myRoom}`;
+                userDisplayHeader.textContent = myUsername.toUpperCase();
                 socket.emit('join room', { username: myUsername, room: myRoom });
             } else {
-                alert("Please enter username and room code");
+                alert("Credentials required to join.");
             }
         }
+
+        // Typing logic
+        input.addEventListener('keydown', () => {
+            socket.emit('typing', { username: myUsername, room: myRoom });
+
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                socket.emit('stop typing', { username: myUsername, room: myRoom });
+            }, 2000);
+        });
+
+        // Backend events
+        socket.on('typing', (data) => {
+            typingText.textContent = `${data.username} is typing...`;
+            typingBox.classList.remove('hidden');
+        });
+
+        socket.on('stop typing', () => {
+            typingBox.classList.add('hidden');
+        });
 
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (input.value) {
-                const msg = input.value;
-                socket.emit('chat message', { msg, room: myRoom, username: myUsername });
+                socket.emit('chat message', { msg: input.value, room: myRoom, username: myUsername });
+                socket.emit('stop typing', { username: myUsername, room: myRoom });
                 input.value = '';
             }
         });
 
         socket.on('chat message', function (data) {
             const isMe = data.username === myUsername;
-            const rowDiv = document.createElement('div');
-            rowDiv.className = `message-row ${isMe ? 'mine' : 'theirs'}`;
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg-node ${isMe ? 'mine' : 'theirs'}`;
 
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.className = 'message-bubble';
+            msgDiv.innerHTML = `
+                <div class="bubble">
+                    ${data.msg.replace(/@(\w+)/g, '<b style="color:#f0abfc">@$1</b>')}
+                </div>
+                <div class="meta">
+                    <span>${isMe ? 'YOU' : data.username.toUpperCase()}</span>
+                    <span>•</span>
+                    <span>${data.time || 'NOW'}</span>
+                </div>
+            `;
 
-            let processedMsg = data.msg;
-            processedMsg = processedMsg.replace(/@(\w+)/g, '<span class="tag-highlight">@$1</span>');
-
-            const senderSpan = document.createElement('span');
-            senderSpan.className = 'message-sender';
-            senderSpan.textContent = isMe ? 'You' : data.username;
-
-            const textDiv = document.createElement('div');
-            textDiv.className = 'message-text';
-            textDiv.innerHTML = processedMsg;
-
-            const timeDiv = document.createElement('div');
-            timeDiv.className = 'message-time';
-            timeDiv.textContent = data.time || 'now';
-
-            bubbleDiv.appendChild(senderSpan);
-            bubbleDiv.appendChild(textDiv);
-            bubbleDiv.appendChild(timeDiv);
-            rowDiv.appendChild(bubbleDiv);
-
-            messagesContainer.appendChild(rowDiv);
+            messagesContainer.appendChild(msgDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         });
 
         socket.on('notification', function (msg) {
             const notifDiv = document.createElement('div');
-            notifDiv.className = 'notification';
+            notifDiv.className = 'system-notif';
             notifDiv.textContent = msg;
             messagesContainer.appendChild(notifDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
