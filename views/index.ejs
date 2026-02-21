@@ -536,6 +536,8 @@
         let myUsername = '';
         let myRoom = '';
         let typingTimeout;
+        let isTyping = false;
+        let activeTypers = new Set();
 
         function generateSecretId() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -544,7 +546,7 @@
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             roomInput.value = result;
-            roomInput.dispatchEvent(new Event('input')); // Trigger label animation
+            roomInput.dispatchEvent(new Event('input'));
         }
 
         function joinChat() {
@@ -562,48 +564,85 @@
             }
         }
 
-        // Typing logic
-        input.addEventListener('keydown', () => {
-            socket.emit('typing', { username: myUsername, room: myRoom });
+        // Auto-rejoin on reconnection (handle server restarts)
+        socket.on('connect', () => {
+            if (myUsername && myRoom) {
+                console.log('Reconnecting to room...');
+                socket.emit('join room', { username: myUsername, room: myRoom });
+            }
+        });
+
+        // Throttled Typing logic
+        input.addEventListener('input', () => {
+            if (!isTyping) {
+                isTyping = true;
+                socket.emit('typing', { username: myUsername, room: myRoom });
+            }
 
             clearTimeout(typingTimeout);
             typingTimeout = setTimeout(() => {
+                isTyping = false;
                 socket.emit('stop typing', { username: myUsername, room: myRoom });
-            }, 2000);
+            }, 3000);
         });
 
-        // Backend events
+        // Typing events (handles multiple users)
         socket.on('typing', (data) => {
-            typingText.textContent = `${data.username} is typing...`;
-            typingBox.classList.remove('hidden');
+            if (data.username !== myUsername) {
+                activeTypers.add(data.username);
+                updateTypingUI();
+            }
         });
 
-        socket.on('stop typing', () => {
-            typingBox.classList.add('hidden');
+        socket.on('stop typing', (data) => {
+            activeTypers.delete(data.username);
+            updateTypingUI();
         });
+
+        function updateTypingUI() {
+            if (activeTypers.size > 0) {
+                const names = Array.from(activeTypers);
+                typingText.textContent = names.length > 1
+                    ? "Multiple users are decrypting..."
+                    : `${names[0]} is decrypting...`;
+                typingBox.classList.remove('hidden');
+            } else {
+                typingBox.classList.add('hidden');
+            }
+        }
 
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (input.value) {
                 socket.emit('chat message', { msg: input.value, room: myRoom, username: myUsername });
+
+                // Reset typing state immediately
+                isTyping = false;
+                clearTimeout(typingTimeout);
                 socket.emit('stop typing', { username: myUsername, room: myRoom });
+
                 input.value = '';
             }
         });
 
         socket.on('chat message', function (data) {
+            if (!data.username) return; // Guard against malformed data
+
             const isMe = data.username === myUsername;
             const msgDiv = document.createElement('div');
             msgDiv.className = `msg-node ${isMe ? 'mine' : 'theirs'}`;
+
+            const safeUsername = (data.username || 'unknown').toUpperCase();
+            const safeTime = data.time || 'NOW';
 
             msgDiv.innerHTML = `
                 <div class="bubble">
                     ${data.msg.replace(/@(\w+)/g, '<b style="color:#f0abfc">@$1</b>')}
                 </div>
                 <div class="meta">
-                    <span>${isMe ? 'YOU' : data.username.toUpperCase()}</span>
+                    <span>${isMe ? 'YOU' : safeUsername}</span>
                     <span>•</span>
-                    <span>${data.time || 'NOW'}</span>
+                    <span>${safeTime}</span>
                 </div>
             `;
 
